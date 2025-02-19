@@ -262,49 +262,38 @@ docker build --build-arg NEED_MIRROR=1 -f Dockerfile -t infiniflow/ragflow:night
 
 ## 🔨 以源代码启动服务
 
-1. 安装 uv。如已经安装，可跳过本步骤：
+1. 下载源代码并安装 Python 依赖：
 
    ```bash
-   pipx install uv
    export UV_INDEX=https://pypi.tuna.tsinghua.edu.cn/simple
-   ```
-
-2. 下载源代码并安装 Python 依赖：
-
-   ```bash
    git clone https://github.com/infiniflow/ragflow.git
    cd ragflow/
    uv sync --python 3.10 --all-extras # install RAGFlow dependent python modules
    ```
 
-3. 通过 Docker Compose 启动依赖的服务（MinIO, Elasticsearch, Redis, and MySQL）：
+2. 通过 Docker Compose 启动依赖的服务（MinIO, Elasticsearch, Redis, and MySQL）：
 
    ```bash
-   docker compose -f docker/docker-compose-base.yml up -d
+   docker compose -f docker/docker-compose-development.yml up -d
    ```
 
-   在 `/etc/hosts` 中添加以下代码，将 **conf/service_conf.yaml** 文件中的所有 host 地址都解析为 `127.0.0.1`：
-
-   ```
-   127.0.0.1       es01 infinity mysql minio redis
-   ```
-
-4. 如果无法访问 HuggingFace，可以把环境变量 `HF_ENDPOINT` 设成相应的镜像站点：
+3. 如果无法访问 HuggingFace，可以把环境变量 `HF_ENDPOINT` 设成相应的镜像站点：
 
    ```bash
    export HF_ENDPOINT=https://hf-mirror.com
    ```
 
-5. 启动后端服务：
+4. 启动后端服务：
 
    ```bash
+   docker exec -it ragflow-server bash
    source .venv/bin/activate
-   export PYTHONPATH=$(pwd)
    bash docker/launch_backend_service.sh
    ```
 
-6. 安装前端依赖：
+5. 安装前端依赖：
    ```bash
+   docker exec -it ragflow-server bash
    cd web
    npm install
    ```
