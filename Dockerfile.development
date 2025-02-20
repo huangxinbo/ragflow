@@ -34,5 +34,6 @@ COPY ./nltk_data $HOME/nltk_data
 
 ENV HF_ENDPOINT=https://hf-mirror.com
 ENV PYTHONPATH=/ragflow
+ENV UV_LINK_MODE=copy
 
 CMD ["tail", "-f", "/dev/null"]
